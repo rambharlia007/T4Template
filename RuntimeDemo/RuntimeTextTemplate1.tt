@@ -14,6 +14,14 @@ using System.Threading.Tasks;
 namespace RuntimeDemo
 {
 
+public static class Extensions
+{
+    public static bool In<T>(this T obj, params T[] list)
+    {
+        return list.Contains(obj);
+    }
+} 
+
 public partial class RuleInputData 
 {
     <# foreach (var data in InputProperties)   
@@ -24,14 +32,15 @@ public partial class RuleInputData
    public void SetInputData(Dictionary<string,string> inputData){
 	  <#  foreach(var data in InputProperties){ #>
 		  if(inputData.ContainsKey("<#=data.Key#>")){
-		      <#= data.Key #> = <#=data.Value#>.Parse(inputData["<#=data.Key#>"]);
-		  }
+
+			
 		<# } #>
    }
 
 }
 
 public partial class RuleOutputData {
+
     <# foreach (var data in OutputProperties)   
    { #>  
    public <#= data.Value #> <#= data.Key #> {get;set;}

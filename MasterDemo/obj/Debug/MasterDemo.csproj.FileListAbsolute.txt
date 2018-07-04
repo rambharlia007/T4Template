@@ -1,7 +1,0 @@
-D:\RuntimeDemo\MasterDemo\bin\Debug\MasterDemo.exe.config
-D:\RuntimeDemo\MasterDemo\bin\Debug\MasterDemo.exe
-D:\RuntimeDemo\MasterDemo\bin\Debug\MasterDemo.pdb
-D:\RuntimeDemo\MasterDemo\obj\Debug\MasterDemo.csproj.CoreCompileInputs.cache
-D:\RuntimeDemo\MasterDemo\obj\Debug\MasterDemo.exe
-D:\RuntimeDemo\MasterDemo\obj\Debug\MasterDemo.pdb
-D:\RuntimeDemo\MasterDemo\obj\Debug\MasterDemo.csprojResolveAssemblyReference.cache

@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using ExcelDataReader;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CSharp;
@@ -6,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -41,8 +43,6 @@ namespace RuntimeDemo
         public Dictionary<string, Type> InputProperties { get; set; }
         public Dictionary<string, Type> OutputProperties { get; set; }
 
-        public List<Dictionary<string, int>> CsvInputValues { get; set; }
-
         public RuntimeTextTemplate1(string ruleDefination, Dictionary<string, Type> inputProperties,
              Dictionary<string, Type> outputProperties)
         {
@@ -65,6 +65,20 @@ namespace RuntimeDemo
         dynamic ComputeRule(Dictionary<string, string> inputData);
     }
 
+    public class ExcelOutputData
+    {
+        public string Name { get; set; }
+        public string ActualValue { get; set; }
+        public string ExpectedValue { get; set; }
+
+        public bool IsTestCasePass
+        {
+            get
+            {
+                return ExpectedValue.Trim().Equals(ActualValue.Trim());
+            }
+        }
+    }
 
     class Program
     {
@@ -73,30 +87,84 @@ namespace RuntimeDemo
             var ruleMethodDefination = GetRuleMethodDefination();
             var inputProperties = GetInputProperties();
             var outputProperties = GetOutputProperties();
+
+            var outputData = new List<List<ExcelOutputData>>();
+            var data = GetCsvInputValues();
+            var columns = data.FirstOrDefault().Select(e => e.Key).ToList();
+
+            for (int i=0; i < 20; i++)
+            {
+                var dat = new List<ExcelOutputData>();
+                foreach(var name in columns)
+                {
+                    var random = new Random().Next(1000,10000).ToString();
+                    dat.Add(new ExcelOutputData()
+                    {
+                        Name = name.ToString(),
+                        ActualValue = random,
+                        ExpectedValue = random
+                    });
+                }
+                outputData.Add(dat);
+            }
+
+
+
             //var csvInputValues = GetCsvInputValues();
             //var T4Template = new RuleTextTemplate(ruleMethodDefination, inputProperties, outputProperties, csvInputValues);
             //var ruleCode = T4Template.TransformText();
 
 
-            var T4Template1 = new RuntimeTextTemplate1(ruleMethodDefination, inputProperties, outputProperties);
-            var ruleCode1 = T4Template1.TransformText();
+            //var T4Template1 = new RuntimeTextTemplate1(ruleMethodDefination, inputProperties, outputProperties);
+            //var ruleCode1 = T4Template1.TransformText();
 
 
-            PrintCalculationRuleResult(ruleCode1);
+            //PrintCalculationRuleResult(ruleCode1);
+
+
+            WriteExcel.WriteExcelFile(outputData);
+
+
 
         }
 
 
         private static List<Dictionary<string, string>> GetCsvInputValues()
         {
-            return new List<Dictionary<string, string>>
-            {   
-                new Dictionary<string, string> { { "I1", "5" }, { "I2", "10" } },
-                new Dictionary<string, string> { { "I1", "6" }, { "I2", "11" } },
-                new Dictionary<string, string> { { "I1", "7" }, { "I2", "12" } },
-                new Dictionary<string, string> { { "I1", "8" }, { "I2", "13" } },
-                new Dictionary<string, string> { { "I1", "9" }, { "I2", "14" } }
-            };
+            var inputDataValues = new List<Dictionary<string, string>>();
+            using (var stream = File.Open(@"D:\TestData.xlsx", FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    var noOfTestCases = reader.AsDataSet().Tables[0].Columns.Count - 1;
+                    var inputRowValues = reader.AsDataSet().Tables[0].Rows.Cast<DataRow>().Skip(1);
+
+                    for (var i = 0; i < noOfTestCases; i++)
+                    {
+                        inputDataValues.Add(new Dictionary<string, string>());
+                    }
+
+                    foreach (DataRow row in inputRowValues)
+                    {
+                        var columnValue = row.ItemArray.Skip(1).ToList();
+                        var inputPropertyName = row.ItemArray.First().ToString();
+                        for (int i = 0; i < columnValue.Count; i++)
+                        {
+                            inputDataValues[i].Add(inputPropertyName, columnValue[i].ToString() ?? string.Empty);
+                        }
+                    }
+                }
+            }
+
+            return inputDataValues;
+            //return new List<Dictionary<string, string>>
+            //{   
+            //    new Dictionary<string, string> { { "I1", "5" }, { "I2", "10" } },
+            //    new Dictionary<string, string> { { "I1", "6" }, { "I2", "11" } },
+            //    new Dictionary<string, string> { { "I1", "7" }, { "I2", "12" } },
+            //    new Dictionary<string, string> { { "I1", "8" }, { "I2", "13" } },
+            //    new Dictionary<string, string> { { "I1", "9" }, { "I2", "14" } }
+            //};
         }
 
         private static Dictionary<string, Type> GetOutputProperties()
@@ -164,12 +232,6 @@ namespace RuntimeDemo
 
                     foreach (var inputData in csvInputValues)
                     {
-                        //var outputData = type.InvokeMember("Compute",
-                        //BindingFlags.Default | BindingFlags.InvokeMethod,
-                        //null,
-                        //obj,
-                        //new object[] { inputData });
-
                        var outputData = obj.ComputeRule(inputData);
                        Console.WriteLine(JsonConvert.SerializeObject(outputData));
                     }
