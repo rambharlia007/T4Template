@@ -29,35 +29,35 @@ namespace RuntimeDemo
         public virtual string TransformText()
         {
             this.Write(@"
-using RuntimeDemo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RuntimeDemo;
 
-namespace RuntimeDemo
+namespace Regulations_UnitTestRunner
 {
 
-public static class Extensions
-{
-    public static bool In<T>(this T obj, params T[] list)
-    {
-        return list.Contains(obj);
-    }
-} 
+	public static class Extensions
+	{
+		public static bool In<T>(this T obj, params object[] list)
+		{
+			return list.Contains(obj);
+		}
+	} 
 
-public partial class RuleInputData 
-{
-    ");
+	public partial class RuleInputData 
+	{
+		");
             
             #line 27 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
  foreach (var data in InputProperties)   
-   { 
+	   { 
             
             #line default
             #line hidden
-            this.Write("  \r\n   public ");
+            this.Write("  \r\n\t\t\tpublic ");
             
             #line 29 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(data.Value));
@@ -71,79 +71,192 @@ public partial class RuleInputData
             
             #line default
             #line hidden
-            this.Write(" {get;set;}\r\n");
+            this.Write(" {get;set;}\r\n\t\t");
             
             #line 30 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
  }  
             
             #line default
             #line hidden
-            this.Write("\r\n   public void SetInputData(Dictionary<string,string> inputData){\r\n\t  ");
+            this.Write("\r\n\t   public void SetInputData(Dictionary<string,string> inputData)\r\n\t   {\r\n\t\tCon" +
+                    "sole.WriteLine(\"Setting Input Data\");\r\n\r\n\t\t  ");
             
-            #line 33 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            #line 36 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
   foreach(var data in InputProperties){ 
             
             #line default
             #line hidden
-            this.Write("\t\t  if(inputData.ContainsKey(\"");
+            this.Write("\t\t\t  if(inputData.ContainsKey(\"");
             
-            #line 34 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            #line 37 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(data.Key));
             
             #line default
             #line hidden
-            this.Write("\")){\r\n\r\n\t\t\t\r\n\t\t");
+            this.Write("\")){\r\n\t\t\t\t  ");
             
-            #line 37 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            #line 38 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+ if (data.Value.ToString().ToLower().Contains("string")) {
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t\t\t  ");
+            
+            #line 39 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(data.Key));
+            
+            #line default
+            #line hidden
+            this.Write(" = inputData[\"");
+            
+            #line 39 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(data.Key));
+            
+            #line default
+            #line hidden
+            this.Write("\"];\r\n\t\t\t\t  ");
+            
+            #line 40 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+} else {
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t\t\t  ");
+            
+            #line 41 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(data.Key));
+            
+            #line default
+            #line hidden
+            this.Write(" = ");
+            
+            #line 41 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(data.Value));
+            
+            #line default
+            #line hidden
+            this.Write(".Parse(inputData[\"");
+            
+            #line 41 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(data.Key));
+            
+            #line default
+            #line hidden
+            this.Write("\"]);\r\n\t\t\t\t  ");
+            
+            #line 42 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
  } 
             
             #line default
             #line hidden
-            this.Write("   }\r\n\r\n}\r\n\r\npublic partial class RuleOutputData {\r\n\r\n    ");
+            this.Write("\t\t\t  }\r\n\t\t\t");
             
             #line 44 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
- foreach (var data in OutputProperties)   
-   { 
+ } 
             
             #line default
             #line hidden
-            this.Write("  \r\n   public ");
+            this.Write("\r\n\t\t\tConsole.WriteLine(\"Setting Input Data completed\");\r\n\t   }\r\n\r\n\t}\r\n\r\n\tpublic p" +
+                    "artial class RuleOutputData \r\n\t{\r\n\t\t");
             
-            #line 46 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            #line 53 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+ foreach (var data in OutputProperties)   
+	   { 
+            
+            #line default
+            #line hidden
+            this.Write("  \r\n\t   public ");
+            
+            #line 55 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(data.Value));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 46 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            #line 55 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(data.Key));
             
             #line default
             #line hidden
-            this.Write(" {get;set;}\r\n");
+            this.Write(" {get;set;}\r\n\t");
             
-            #line 47 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            #line 56 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
  }  
             
             #line default
             #line hidden
-            this.Write(@"}
-
-public class CalculationRule : IRule {
-  public RuleOutputData ruleOutputData = new RuleOutputData();
-   public RuleInputData ruleInputData = new RuleInputData();
-   public dynamic ComputeRule(Dictionary<string,string> inputData){
-    ruleInputData.SetInputData(inputData);
-	var res = new RuleOutputData(); 
-         ");
+            this.Write("\t}\r\n\r\n\tpublic class CalculationRule : IRule \r\n\t{\r\n\t\t#region WorkingDataElements S" +
+                    "tart\r\n\t\t");
             
-            #line 56 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(RuleDefination));
+            #line 62 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+ foreach (var data in WorkingProperties)   
+		   { 
             
             #line default
             #line hidden
-            this.Write("\r\n\t\t return res;\r\n   }\r\n}\r\n}");
+            this.Write("  \r\n\t\t   public ");
+            
+            #line 64 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(data.Value));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 64 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(data.Key));
+            
+            #line default
+            #line hidden
+            this.Write(" {get;set;}\r\n\t\t");
+            
+            #line 65 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+ }  
+            
+            #line default
+            #line hidden
+            this.Write(@"		
+		#endregion WorkingDataElements Start
+
+		public RuleOutputData ruleOutputData = new RuleOutputData();
+		public RuleInputData ruleInputData = new RuleInputData();
+
+		public bool Condition()
+		{
+		Console.WriteLine(""Executing Condition Block started"");
+			return ");
+            
+            #line 75 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ConditionDefinition));
+            
+            #line default
+            #line hidden
+            this.Write(";\r\n\t\t}\r\n\r\n\t\tpublic void Regulation()\r\n\t\t{\r\n\t\tConsole.WriteLine(\"Executing Regulat" +
+                    "ion Block started\");\r\n\t\t\t");
+            
+            #line 81 "D:\RuntimeDemo\RuntimeDemo\RuntimeTextTemplate1.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(RegulationDefinition));
+            
+            #line default
+            #line hidden
+            this.Write(@"
+			Console.WriteLine(""Executing Regulation Block completed"");
+		}
+
+		public dynamic ComputeRule(Dictionary<string,string> inputData)
+		{
+			ruleInputData.SetInputData(inputData);
+
+			var res = new RuleOutputData();
+
+			if(Condition()){
+				Regulation();
+			}		
+			return res;
+		}
+	}
+}");
             return this.GenerationEnvironment.ToString();
         }
     }

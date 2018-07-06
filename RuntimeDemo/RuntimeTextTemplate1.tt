@@ -4,57 +4,94 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 
-using RuntimeDemo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RuntimeDemo;
 
-namespace RuntimeDemo
+namespace Regulations_UnitTestRunner
 {
 
-public static class Extensions
-{
-    public static bool In<T>(this T obj, params T[] list)
-    {
-        return list.Contains(obj);
-    }
-} 
+	public static class Extensions
+	{
+		public static bool In<T>(this T obj, params object[] list)
+		{
+			return list.Contains(obj);
+		}
+	} 
 
-public partial class RuleInputData 
-{
-    <# foreach (var data in InputProperties)   
-   { #>  
-   public <#= data.Value #> <#= data.Key #> {get;set;}
-<# }  #>
+	public partial class RuleInputData 
+	{
+		<# foreach (var data in InputProperties)   
+	   { #>  
+			public <#= data.Value #> <#= data.Key #> {get;set;}
+		<# }  #>
 
-   public void SetInputData(Dictionary<string,string> inputData){
-	  <#  foreach(var data in InputProperties){ #>
-		  if(inputData.ContainsKey("<#=data.Key#>")){
+	   public void SetInputData(Dictionary<string,string> inputData)
+	   {
+		Console.WriteLine("Setting Input Data");
 
-			
-		<# } #>
-   }
+		  <#  foreach(var data in InputProperties){ #>
+			  if(inputData.ContainsKey("<#=data.Key#>")){
+				  <# if (data.Value.ToString().ToLower().Contains("string")) {#>
+					  <#= data.Key #> = inputData["<#=data.Key#>"];
+				  <#} else {#>
+					  <#= data.Key #> = <#=data.Value#>.Parse(inputData["<#=data.Key#>"]);
+				  <# } #>
+			  }
+			<# } #>
 
-}
+			Console.WriteLine("Setting Input Data completed");
+	   }
 
-public partial class RuleOutputData {
+	}
 
-    <# foreach (var data in OutputProperties)   
-   { #>  
-   public <#= data.Value #> <#= data.Key #> {get;set;}
-<# }  #>
-}
+	public partial class RuleOutputData 
+	{
+		<# foreach (var data in OutputProperties)   
+	   { #>  
+	   public <#= data.Value #> <#= data.Key #> {get;set;}
+	<# }  #>
+	}
 
-public class CalculationRule : IRule {
-  public RuleOutputData ruleOutputData = new RuleOutputData();
-   public RuleInputData ruleInputData = new RuleInputData();
-   public dynamic ComputeRule(Dictionary<string,string> inputData){
-    ruleInputData.SetInputData(inputData);
-	var res = new RuleOutputData(); 
-         <#=  RuleDefination	#>
-		 return res;
-   }
-}
+	public class CalculationRule : IRule 
+	{
+		#region WorkingDataElements Start
+		<# foreach (var data in WorkingProperties)   
+		   { #>  
+		   public <#= data.Value #> <#= data.Key #> {get;set;}
+		<# }  #>
+		
+		#endregion WorkingDataElements Start
+
+		public RuleOutputData ruleOutputData = new RuleOutputData();
+		public RuleInputData ruleInputData = new RuleInputData();
+
+		public bool Condition()
+		{
+		Console.WriteLine("Executing Condition Block started");
+			return <#=  ConditionDefinition	#>;
+		}
+
+		public void Regulation()
+		{
+		Console.WriteLine("Executing Regulation Block started");
+			<#=  RegulationDefinition	#>
+			Console.WriteLine("Executing Regulation Block completed");
+		}
+
+		public dynamic ComputeRule(Dictionary<string,string> inputData)
+		{
+			ruleInputData.SetInputData(inputData);
+
+			var res = new RuleOutputData();
+
+			if(Condition()){
+				Regulation();
+			}		
+			return res;
+		}
+	}
 }
